@@ -1,19 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>{{ group.name }}</h2>
-  <p>Created by: {{ group.created_by.username }}</p>
-  <p>Members:</p>
-  <ul>
-    {% for member in group.members.all %}
-      <li>{{ member.username }}</li>
-    {% endfor %}
-  </ul>
-  <a href="{% url 'add_expense' group.id %}">Add Expense</a>
-  <h3>Expenses:</h3>
-  <ul>
-    {% for expense in group.expenses.all %}
-      <li>{{ expense.description }} - {{ expense.amount }} (Paid by {{ expense.paid_by.username }})</li>
-    {% endfor %}
-  </ul>
+    <h1>{{ group.name }}</h1>
+    <p>{{ group.description }}</p>
+    <h2>Expenses</h2>
+    <ul>
+        {% for expense in expenses %}
+            <li>{{ expense.description }}: {{ expense.amount }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'add_expense' group.id %}">Add an expense</a>
 {% endblock %}

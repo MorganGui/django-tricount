@@ -3,4 +3,9 @@
 {% block content %}
     <h1>Welcome to Tricount</h1>
     <a href="{% url 'create_group' %}">Create a new group</a>
+    <ul>
+        {% for group in groups %}
+            <li><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
+        {% endfor %}
+    </ul>
 {% endblock %}

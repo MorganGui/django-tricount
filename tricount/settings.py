@@ -53,7 +53,7 @@ ROOT_URLCONF = 'tricount.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'tricount', 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,6 +65,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'tricount.wsgi.application'
 
@@ -107,8 +108,16 @@ USE_I18N = True
 
 USE_TZ = True
 
+DATE_INPUT_FORMATS = [
+    '%Y-%m-%d',    # '2024-07-23'
+    '%m/%d/%Y',    # '07/23/2024'
+    '%m/%d/%y',    # '07/23/24'
+]
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
+
+LOGIN_REDIRECT_URL = '/'
 
 STATIC_URL = 'static/'
 
