@@ -1,18 +1,18 @@
-version: '3.7'
+version: '3.8'
 
 services:
   web:
     build: .
-    command: gunicorn --bind 0.0.0.0:8000 nom_du_projet.wsgi:application
+    command: gunicorn --bind 0.0.0.0:8000 tricount.wsgi:application
     volumes:
       - .:/app
     ports:
       - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=tricount.settings
+      - DATABASE_URL=postgres://postgres:password@db:5432/dbname
     depends_on:
       - db
-    environment:
-      - DJANGO_SETTINGS_MODULE=nom_du_projet.settings
-      - DATABASE_URL=postgres://postgres:password@db:5432/dbname
 
   db:
     image: postgres:12
