@@ -1,0 +1,10 @@
+:root {
+    --background: #000000;
+    --background-disabled: #666666;
+    --text: #ffffff;
+    --text-disabled: #999999;
+    --primary: hsl(150, 50%, 50%);
+
+    --error: hsl(0, 50%, 50%);
+    --error-bg: hsla(0, 50%, 50%, 0.2);
+}

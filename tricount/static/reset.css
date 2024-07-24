@@ -1,0 +1,31 @@
+* {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  font-family: Nunito, Arial, Helvetica, sans-serif;
+  letter-spacing: 0.1em;
+}
+
+html {
+  height: 100%;
+  font-size: 16px;
+  background-color: var(--background);
+  color: var(--text);
+  fill: var(--text);
+}
+
+body {
+  height: 100%;
+  background-image: url('./img/cartographer.webp');
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+main {
+  height: 100%;
+  overflow: auto;
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+}
