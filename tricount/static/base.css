@@ -1,0 +1,123 @@
+:root {
+    --color-background: #eeeeee;
+    --color-gradient: #eeeeee;
+    --color-pattern: #dddddd;
+    --size-pattern: 74px;
+    --angle-gradient: 135deg;
+    --icon-fill: 0;
+    --icon-wght: 300;
+    --icon-grad: 0;
+    --icon-opsz: 24;
+    font-family: "Poppins", Arial, Helvetica, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    overflow: hidden;
+    background-color: var(--color-background);
+    background-image: linear-gradient(
+            var(--angle-gradient),
+            transparent,
+            var(--color-gradient) 80%
+        ),
+        linear-gradient(var(--color-pattern) 1px, transparent 1px),
+        linear-gradient(to right, var(--color-pattern) 1px, transparent 1px);
+    background-size: 100% 100%, var(--size-pattern) var(--size-pattern),
+        var(--size-pattern) var(--size-pattern);
+}
+
+main {
+    flex: 1 1 auto;
+    height: 100%;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: "FILL" var(--icon-fill), "wght" var(--icon-wght),
+        "GRAD" var(--icon-grad), "opsz" var(--icon-opsz);
+}
+
+/* Buttons */
+
+button {
+    border: none;
+}
+
+button.glow {
+    padding: var(--gap-regular) var(--gap-medium);
+    color: var(--color-primary);
+    background: var(--color-secondary);
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: var(--radius-small);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    border-radius: var(--radius-small);
+    transition: transform 200ms ease;
+}
+
+button.glow:hover {
+    transform: scale(1.05);
+}
+
+button.glow:before {
+    content: "";
+    background: linear-gradient(
+        45deg,
+        #ff0000,
+        #ff7300,
+        #fffb00,
+        #48ff00,
+        #00ffd5,
+        #002bff,
+        #7a00ff,
+        #ff00c8,
+        #ff0000
+    );
+    position: absolute;
+    top: -0.25rem;
+    left: -0.25rem;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    -webkit-filter: blur(5px);
+    width: calc(100% + 0.5rem);
+    height: calc(100% + 0.5rem);
+    animation: glowing-button 20s linear infinite;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: inherit;
+    opacity: 0;
+}
+
+button.glow:hover:before {
+    opacity: 1;
+}
+
+button.glow:after {
+    z-index: -1;
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--color-secondary);
+    left: 0;
+    top: 0;
+    border-radius: inherit;
+}
+
+@keyframes glowing-button {
+    0% {
+        background-position: 0 0;
+    }
+    50% {
+        background-position: 400% 0;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}

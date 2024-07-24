@@ -1,10 +1,23 @@
 :root {
-    --background: #000000;
-    --background-disabled: #666666;
-    --text: #ffffff;
-    --text-disabled: #999999;
-    --primary: hsl(150, 50%, 50%);
+    --color-accent: red;
+    --color-primary: white;
+    --color-secondary: black;
 
-    --error: hsl(0, 50%, 50%);
-    --error-bg: hsla(0, 50%, 50%, 0.2);
+    --radius-small: 0.25rem;
+
+    --gap-mini: 0.25rem;
+    --gap-small: 0.5rem;
+    --gap-regular: 0.8rem;
+    --gap-medium: 1.3rem;
+    --gap-large: 2rem;
+}
+
+.row {
+    display: flex;
+    gap: var(--gap-small);
+}
+
+.center {
+    justify-content: center;
+    align-items: center;
 }

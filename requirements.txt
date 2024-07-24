@@ -1,3 +1,4 @@
-Django>=3.0,<4.0
-gunicorn
-psycopg2-binary
+asgiref==3.8.1
+Django==5.0.7
+sqlparse==0.5.1
+tzdata==2024.1
