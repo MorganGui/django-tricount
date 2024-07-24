@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Exchange Rates</h1>
+{% if error %}
+    <p>{{ error }}</p>
+{% else %}
+    <table>
+        <thead>
+            <tr>
+                <th>Currency</th>
+                <th>Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for currency, rate in rates.rates.items %}
+            <tr>
+                <td>{{ currency }}</td>
+                <td>{{ rate }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}

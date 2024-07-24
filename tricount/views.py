@@ -1,9 +1,9 @@
-# views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from .models import Group, Expense
 from .forms import GroupForm, ExpenseForm, SignUpForm, AddMemberForm
+from .utils import get_exchange_rates
 
 def home(request):
     groups = Group.objects.all()
@@ -91,3 +91,11 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+def exchange_rate_view(request):
+    api_key = '7774bcaf1def23886ebd144d9c1939a8'  # Remplacez par votre clé API
+    rates = get_exchange_rates(api_key)
+    if rates:
+        return render(request, 'tricount/exchange_rates.html', {'rates': rates})
+    else:
+        return render(request, 'tricount/exchange_rates.html', {'error': 'Unable to fetch exchange rates'})
