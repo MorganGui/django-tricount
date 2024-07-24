@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Add Expense to {{ group.name }}</h1>
+    <h1>Add Member to {{ group.name }}</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Add Expense</button>
+        <button type="submit">Add Member</button>
     </form>
 {% endblock %}

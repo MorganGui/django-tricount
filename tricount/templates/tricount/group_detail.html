@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
-
 {% block content %}
     <h1>{{ group.name }}</h1>
     <p>{{ group.description }}</p>
-    <h2>Expenses</h2>
+    <h2>Members</h2>
     <ul>
-        {% for expense in expenses %}
-            <li>{{ expense.description }}: {{ expense.amount }}</li>
+        {% for member in group.members.all %}
+            <li>{{ member.username }}</li>
         {% endfor %}
     </ul>
-    <a href="{% url 'add_expense' group.id %}">Add an expense</a>
+    <a href="{% url 'add_expense' group.id %}">Add Expense</a>
+    <a href="{% url 'add_member' group.id %}">Add Member</a>
+    <a href="{% url 'edit_group' group.id %}">Edit Group</a>
+    <form method="post" action="{% url 'delete_group' group.id %}">
+        {% csrf_token %}
+        <button type="submit">Delete Group</button>
+    </form>
 {% endblock %}
