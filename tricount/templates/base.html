@@ -22,7 +22,7 @@
     </head>
     <body>
         <main>
-            {% if user.is_authenticated or request.get_full_path == "/accounts/login/" or request.get_full_path == "/accounts/signup/" %} 
+            {% if user.is_authenticated or request.get_full_path == "/accounts/login/" or request.get_full_path == "/accounts/signup/" or request.get_full_path == "/accounts/logout/" %} 
                 {% block content %} 
                 {% endblock %} 
             {% else %}
@@ -40,7 +40,11 @@
         </main>
         {% if user.is_authenticated %}
             <footer>
-                <a class="button glow" style="margin-left: auto;" href="{% url 'logout' %}">Logout</a>
+                <a class="button secondary" href="{% url 'home' %}">Accueil</a>
+                <form id="logout-form" method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" style="height: 100%;" class="glow">Me déconnecter</button>
+                </form>
             </footer>
         {% endif %}
     </body>

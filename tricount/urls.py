@@ -15,6 +15,6 @@ urlpatterns = [
     path('group/<int:group_id>/delete/', views.delete_group, name='delete_group'),
     path('accounts/signup/', views.signup, name='signup'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(template_name='registration/logout.html'), name='logout'),
     path('exchange-rates/', views.exchange_rate_view, name='exchange_rate_view'),
 ]
