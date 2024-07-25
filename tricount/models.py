@@ -1,7 +1,5 @@
-# models.py
 from django.db import models
 from django.contrib.auth.models import User
-
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -25,3 +23,13 @@ class Expense(models.Model):
 
     def __str__(self):
         return self.description
+
+class MemberBalance(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+class ParticipantPayment(models.Model):
+    expense = models.ForeignKey(Expense, on_delete=models.CASCADE)
+    participant = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)

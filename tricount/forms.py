@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Group, Expense, Profile
+from .models import Group, Expense, Profile, ParticipantPayment
 
 class GroupForm(forms.ModelForm):
     class Meta:
@@ -25,3 +25,8 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['currency']
+
+class ParticipantPaymentForm(forms.ModelForm):
+    class Meta:
+        model = ParticipantPayment
+        fields = ['participant', 'amount']
