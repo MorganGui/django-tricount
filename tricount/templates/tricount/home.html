@@ -7,7 +7,7 @@
         {% for group in groups %}
             <a class="group" href="{% url 'group_detail' group.id %}">
                 <p>{{ group.name }}</p>
-                <div>{{ group.total_amount }}</div>
+                <div>{{ group.total_amount }} €</div>
             </a>
         {% endfor %}
     </div>
