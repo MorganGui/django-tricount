@@ -1,7 +1,12 @@
 :root {
-    --color-accent: red;
+    --color-accent: #0031e4;
     --color-primary: white;
     --color-secondary: black;
+    --color-grey-1: #3b3b3b;
+    --color-grey-2: #6f6f6f;
+    --color-grey-3: #b7b7b7;
+    --color-grey-4: #dbdbdb;
+    --color-warn: #e96900;
 
     --radius-small: 0.25rem;
 

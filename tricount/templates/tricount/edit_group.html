@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Edit Group: {{ group.name }}</h1>
+    <h1>Mettre à jour le groupe: {{ group.name }}</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save Changes</button>
+        {{ form.as_div }}
+        <button class="glow" type="submit">Enregistrer</button>
     </form>
 {% endblock %}

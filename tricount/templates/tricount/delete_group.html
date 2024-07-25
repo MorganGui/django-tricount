@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Are you sure you want to delete {{ group.name }}?</h1>
+    <h1>Voulez vous vraiment supprimer le groupe {{ group.name }}?</h1>
     <form method="post">
         {% csrf_token %}
-        <button type="submit">Yes, Delete</button>
-        <a href="{% url 'group_detail' group.id %}">Cancel</a>
+        <button class="secondary" type="submit">Oui, supprimer</button>
+        <a class="button glow" href="{% url 'group_detail' group.id %}">Annuler</a>
     </form>
 {% endblock %}

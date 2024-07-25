@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
     <h1>Bienvenue sur Tricount</h1>
-    <a href="{% url 'create_group' %}">Create a new group</a>
-    <ul>
+    <p style="margin-bottom: 1rem;">Ici vous pouvez créer des groupes d'amis afin de mettre en commun vos recettes ainsi que vos dépenses, adieux les tracas des vacances, place à la sérénité !</p>
+    <a class="button glow" href="{% url 'create_group' %}">Créer un nouveau groupe</a>
+    <div class="groups">
         {% for group in groups %}
-            <li><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
+            <a class="group" href="{% url 'group_detail' group.id %}">
+                <p>{{ group.name }}</p>
+                <div>2 membres</div>
+            </a>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Create a New Group</h1>
+    <h1>Créer un nouveau groupe</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
+        {{ form.as_div }}
+        <button class="glow" type="submit">Enregistrer</button>
     </form>
 {% endblock %}

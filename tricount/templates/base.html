@@ -3,38 +3,45 @@
 <html lang="en">
     <head>
         <title>Tricount</title>
-        <link rel="stylesheet" href="{% static 'variables.css' %}">
-        <link rel="stylesheet" href="{% static 'reset.css' %}">
-        <link rel="stylesheet" href="{% static 'base.css' %}">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'variables.css' %}" />
+        <link rel="stylesheet" href="{% static 'reset.css' %}" />
+        <link rel="stylesheet" href="{% static 'base.css' %}" />
+        <link rel="stylesheet" href="{% static 'button.css' %}" />
+        <link rel="stylesheet" href="{% static 'form.css' %}" />
+        <link rel="stylesheet" href="{% static 'group.css' %}" />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+            rel="stylesheet"
+        />
     </head>
     <body>
-        <nav>
-            <ul>
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}">Login</a></li>
-                    <li><a href="{% url 'signup' %}">Sign Up</a></li>
-                {% endif %}
-            </ul>
-            <button class="glow">Button</button>
-        </nav>
         <main>
-            {% if user.is_authenticated %}
-                {% block content %}
-                {% endblock %}
+            {% if user.is_authenticated or request.get_full_path == "/accounts/login/" or request.get_full_path == "/accounts/signup/" %} 
+                {% block content %} 
+                {% endblock %} 
             {% else %}
                 <h1>Bienvenue sur Tricount</h1>
-                <p>Pour accéder à l'application ainsi que l'ensemble de ses fonctionnalités il sera necessaire de vous connecter ou de créer un compte</p>
-                <div class="row">
-                    <button>Connexion</button>
-                    <button>Inscription</button>
+                <p>
+                    Pour accéder à l'application ainsi que l'ensemble de ses
+                    fonctionnalités il sera necessaire de vous connecter ou de créer
+                    un compte
+                </p>
+                <div class="row center" style="margin-top: 4rem;">
+                    <a href="{% url 'login' %}" class="button secondary">Connexion</a>
+                    <a href="{% url 'signup' %}" class="button glow">Inscription</a>
                 </div>
             {% endif%}
         </main>
+        {% if user.is_authenticated %}
+            <footer>
+                <a class="button glow" style="margin-left: auto;" href="{% url 'logout' %}">Logout</a>
+            </footer>
+        {% endif %}
     </body>
 </html>

@@ -13,6 +13,6 @@
     <a href="{% url 'edit_group' group.id %}">Edit Group</a>
     <form method="post" action="{% url 'delete_group' group.id %}">
         {% csrf_token %}
-        <button type="submit">Delete Group</button>
+        <button class="glow" type="submit">Delete Group</button>
     </form>
 {% endblock %}

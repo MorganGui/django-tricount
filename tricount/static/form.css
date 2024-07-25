@@ -1,0 +1,31 @@
+form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-medium);
+}
+
+form > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-small);
+}
+
+form .helptext {
+    order: 100;
+    font-size: 0.8rem;
+    color: var(--color-grey-2);
+}
+
+input,
+textarea {
+    border: 2px solid var(--color-grey-2);
+    padding: 0.6rem 1rem;
+    outline: none;
+    border-radius: var(--radius-small);
+}
+
+.errorlist {
+    font-size: 0.8rem;
+    order: 100;
+    color: var(--color-warn);
+}

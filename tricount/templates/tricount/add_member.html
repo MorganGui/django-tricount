@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Add Member to {{ group.name }}</h1>
+    <h1>Ajouter un membre au groupe {{ group.name }}</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Member</button>
+        {{ form.as_div }}
+        <button class="glow" type="submit">Ajouter le membre</button>
     </form>
 {% endblock %}
