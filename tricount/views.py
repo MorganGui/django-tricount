@@ -6,9 +6,15 @@ from .models import Group, Expense, Profile, MemberBalance, ParticipantPayment
 from .forms import GroupForm, ExpenseForm, SignUpForm, AddMemberForm
 from .utils import get_exchange_rates
 
+# def home(request):
+#     groups = Group.objects.all()
+#     return render(request, 'tricount/home.html', {'groups': groups})
 def home(request):
-    groups = Group.objects.all()
-    return render(request, 'tricount/home.html', {'groups': groups})
+    if request.user.is_authenticated:
+        groups = request.user.membership_groups.all()
+        return render(request, 'tricount/home.html', {'groups': groups})
+    else:
+        return redirect('login')
 
 @login_required
 def create_group(request):
