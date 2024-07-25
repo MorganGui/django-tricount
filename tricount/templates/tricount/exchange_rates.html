@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
-
+{% load custom_filters %}
 {% block content %}
-<h1>Exchange Rates</h1>
-{% if error %}
-    <p>{{ error }}</p>
-{% else %}
-    <table>
-        <thead>
-            <tr>
-                <th>Currency</th>
-                <th>Rate</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for currency, rate in rates.rates.items %}
-            <tr>
-                <td>{{ currency }}</td>
-                <td>{{ rate }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
+    <h1>Taux de Change</h1>
+    {% if error %}
+        <p>{{ error }}</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Devise</th>
+                    <th>Taux</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for currency, rate in rates.items %}
+                    <tr>
+                        <td>{{ currency }}</td>
+                        <td>{{ rate }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

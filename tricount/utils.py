@@ -2,13 +2,15 @@
 import requests
 from .models import Expense, MemberBalance
 
+
 def get_exchange_rates(api_key):
-    url = f"https://api.exchangerate-api.com/v4/latest/USD?apikey={api_key}"
+    url = f"http://api.exchangeratesapi.io/v1/latest?access_key={api_key}"
     response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()['rates']
-    else:
-        return None
+    data = response.json()
+    print(data)  # Ajouter cette ligne pour vérifier la réponse de l'API
+    if 'rates' in data:
+        return data['rates']
+    return None
 
 def calculate_balances(group):
     members = group.members.all()

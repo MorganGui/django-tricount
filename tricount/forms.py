@@ -6,7 +6,7 @@ from .models import Group, Expense, Profile, ParticipantPayment
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'total_amount']
 
 class AddMemberForm(forms.Form):
     username = forms.CharField(max_length=150)
@@ -26,7 +26,22 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ['currency']
 
-class ParticipantPaymentForm(forms.ModelForm):
-    class Meta:
-        model = ParticipantPayment
-        fields = ['participant', 'amount']
+class CustomExpenseForm(forms.Form):
+    description = forms.CharField(max_length=255)
+    total_amount = forms.DecimalField(max_digits=10, decimal_places=2)
+    payments = forms.CharField(widget=forms.Textarea)
+
+    def clean_payments(self):
+        payments_str = self.cleaned_data['payments']
+        payments_list = payments_str.splitlines()
+        payments = []
+        for payment_str in payments_list:
+            try:
+                username, amount_paid = payment_str.split(',')
+                user = User.objects.get(username=username.strip())
+                payments.append({'member': user, 'amount_paid': float(amount_paid.strip())})
+            except ValueError:
+                raise forms.ValidationError("Format invalide pour les paiements.")
+            except User.DoesNotExist:
+                raise forms.ValidationError(f"Utilisateur {username.strip()} n'existe pas.")
+        return payments
