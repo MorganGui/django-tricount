@@ -17,7 +17,8 @@ form .helptext {
 }
 
 input,
-textarea {
+textarea,
+select {
     border: 2px solid var(--color-grey-2);
     padding: 0.6rem 1rem;
     outline: none;
