@@ -1,9 +1,11 @@
+<!-- create_group.html -->
 {% extends 'base.html' %}
+
 {% block content %}
-    <h1>Créer un nouveau groupe</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_div }}
-        <button class="glow" type="submit">Créer le groupe</button>
-    </form>
+<h1>Créer un nouveau groupe</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <button type="submit">Créer le groupe</button>
+</form>
 {% endblock %}

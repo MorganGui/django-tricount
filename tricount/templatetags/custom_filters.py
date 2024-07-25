@@ -2,6 +2,6 @@ from django import template
 
 register = template.Library()
 
-@register.filter(name='abs')
-def abs_value(value):
+@register.filter
+def custom_abs(value):
     return abs(value)

@@ -1,18 +1,51 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
+
 {% block content %}
     <h1>{{ group.name }}</h1>
     <p>{{ group.description }}</p>
-    <h2>Members</h2>
+
+    <h2>Membres</h2>
     <ul>
         {% for member in group.members.all %}
-            <li>{{ member.username }}</li>
+        <li>{{ member.username }}</li>
         {% endfor %}
     </ul>
-    <a href="{% url 'add_expense' group.id %}">Add Expense</a>
-    <a href="{% url 'add_member' group.id %}">Add Member</a>
-    <a href="{% url 'edit_group' group.id %}">Edit Group</a>
-    <form method="post" action="{% url 'delete_group' group.id %}">
-        {% csrf_token %}
-        <button class="glow" type="submit">Delete Group</button>
-    </form>
+
+    <h2>Soldes</h2>
+    <ul>
+        {% for balance in balances %}
+        <li>{{ balance.member.username }}:
+            {% if balance.balance > 0 %}
+            <span style="color: green;">doit {{ balance.balance }} au groupe</span>
+            {% elif balance.balance < 0 %}
+            <span style="color: red;">est dû {{ balance.balance|custom_abs }} par le groupe</span>
+            {% else %}
+            est à jour
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Actions</h2>
+    <ul>
+        <li><a href="{% url 'add_expense' group.id %}">Ajouter une dépense</a></li>
+        <li><a href="{% url 'add_custom_expense' group.id %}">Ajouter une dépense personnalisée</a></li>
+        <li><a href="{% url 'add_member' group.id %}">Ajouter un membre</a></li>
+        <li><a href="{% url 'edit_group' group.id %}">Modifier le groupe</a></li>
+        <li>
+            <form method="post" action="{% url 'delete_group' group.id %}">
+                {% csrf_token %}
+                <button type="submit">Supprimer le groupe</button>
+            </form>
+        </li>
+    </ul>
+
+    <h2>Dépenses</h2>
+    <p>Total des dépenses: {{ total_expenses }}</p>
+    <ul>
+        {% for payment in payments %}
+        <li>{{ payment.member.username }} a payé {{ payment.amount_paid }} pour {{ payment.expense.description }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Group, Expense, Profile, MemberBalance, ParticipantPayment
-from .forms import GroupForm, ExpenseForm, SignUpForm, AddMemberForm
+from .models import Group, Expense, Profile, ParticipantPayment
+from .forms import GroupForm, ExpenseForm, SignUpForm, AddMemberForm, CustomExpenseForm
 from .utils import get_exchange_rates
 
 def home(request):
@@ -26,23 +26,20 @@ def create_group(request):
 def group_detail(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     expenses = Expense.objects.filter(group=group)
-    balances = MemberBalance.objects.filter(group=group)
-    participant_payments = ParticipantPayment.objects.filter(expense__group=group)
-
-    total_expense = sum(expense.amount for expense in expenses)
+    participant_payments = ParticipantPayment.objects.filter(group=group)
+    total_paid_by_each_member = {}
+    for payment in participant_payments:
+        if payment.member in total_paid_by_each_member:
+            total_paid_by_each_member[payment.member] += payment.amount_paid
+        else:
+            total_paid_by_each_member[payment.member] = payment.amount_paid
+    total_amount = group.total_amount
     return render(request, 'tricount/group_detail.html', {
         'group': group,
         'expenses': expenses,
-        'balances': balances,
-        'participant_payments': participant_payments,
-        'total_expense': total_expense,
+        'total_paid_by_each_member': total_paid_by_each_member,
+        'total_amount': total_amount
     })
-
-@login_required
-def join_group(request, group_id):
-    group = get_object_or_404(Group, id=group_id)
-    group.members.add(request.user)
-    return redirect('group_detail', group_id=group.id)
 
 @login_required
 def add_member(request, group_id):
@@ -88,6 +85,8 @@ def add_expense(request, group_id):
             expense.group = group
             expense.save()
             form.save_m2m()
+            group.total_amount += expense.amount
+            group.save()
             return redirect('group_detail', group_id=group.id)
     else:
         form = ExpenseForm()
@@ -97,29 +96,32 @@ def add_expense(request, group_id):
 def add_custom_expense(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     if request.method == 'POST':
-        expense_form = ExpenseForm(request.POST)
-        payment_forms = [
-            ParticipantPaymentForm(request.POST, prefix=str(i))
-            for i in range(len(request.POST.getlist('participant')))
-        ]
-        if expense_form.is_valid() and all([pf.is_valid() for pf in payment_forms]):
-            expense = expense_form.save(commit=False)
-            expense.group = group
-            expense.save()
-            expense_form.save_m2m()
-            for pf in payment_forms:
-                payment = pf.save(commit=False)
-                payment.expense = expense
-                payment.save()
+        form = CustomExpenseForm(request.POST)
+        if form.is_valid():
+            description = form.cleaned_data['description']
+            total_amount = form.cleaned_data['total_amount']
+            payments = form.cleaned_data['payments']
+            expense = Expense.objects.create(
+                group=group,
+                description=description,
+                amount=total_amount,
+                payer=request.user
+            )
+            for payment_data in payments:
+                member = payment_data['member']
+                amount_paid = payment_data['amount_paid']
+                ParticipantPayment.objects.create(
+                    expense=expense,
+                    group=group,
+                    member=member,
+                    amount_paid=amount_paid
+                )
+            group.total_amount += total_amount
+            group.save()
             return redirect('group_detail', group_id=group.id)
     else:
-        expense_form = ExpenseForm()
-        payment_forms = [ParticipantPaymentForm(prefix=str(i)) for i in range(len(group.members.all()))]
-    return render(request, 'tricount/add_custom_expense.html', {
-        'expense_form': expense_form,
-        'payment_forms': payment_forms,
-        'group': group,
-    })
+        form = CustomExpenseForm()
+    return render(request, 'tricount/add_custom_expense.html', {'form': form, 'group': group})
 
 def signup(request):
     if request.method == 'POST':
@@ -133,7 +135,7 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 def exchange_rate_view(request):
-    api_key = '7774bcaf1def23886ebd144d9c1939a8'  # Remplacez par votre clé API
+    api_key = '7774bcaf1def23886ebd144d9c1939a8'
     rates = get_exchange_rates(api_key)
     if rates:
         return render(request, 'tricount/exchange_rates.html', {'rates': rates})
