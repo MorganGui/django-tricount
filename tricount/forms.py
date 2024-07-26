@@ -1,12 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Group, Expense, Profile, ParticipantPayment
+from .models import Group, Expense, Profile, ParticipantPayment, Receipt
 
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'description', 'total_amount']
+        fields = ['name', 'description']
 
 class AddMemberForm(forms.Form):
     username = forms.CharField(max_length=150)
@@ -15,6 +15,11 @@ class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
         fields = ['description', 'amount', 'date', 'payer', 'participants']
+
+class ReceiptForm(forms.ModelForm):
+    class Meta:
+        model = Receipt
+        fields = ['amount', 'date', 'payer']
 
 class SignUpForm(UserCreationForm):
     class Meta:
@@ -28,7 +33,6 @@ class ProfileForm(forms.ModelForm):
 
 class CustomExpenseForm(forms.Form):
     description = forms.CharField(max_length=255)
-    total_amount = forms.DecimalField(max_digits=10, decimal_places=2)
     payments = forms.CharField(widget=forms.Textarea)
 
     def clean_payments(self):

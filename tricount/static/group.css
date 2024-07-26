@@ -6,6 +6,7 @@
 }
 
 .group {
+    cursor: pointer;
     display: flex;
     align-items: stretch;
     border: 2px solid var(--color-grey-3);

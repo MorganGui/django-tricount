@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Ajouter de l'argent pour le groupe {{ group.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_div }}
+        <button class="glow" type="submit">Ajouter la somme</button>
+    </form>
+{% endblock %}

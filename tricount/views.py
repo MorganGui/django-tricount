@@ -1,15 +1,26 @@
 import functools
+from gc import get_objects
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from .models import Group, Expense, Profile, ParticipantPayment
-from .forms import GroupForm, ExpenseForm, SignUpForm, AddMemberForm, CustomExpenseForm
+from .forms import GroupForm, ExpenseForm, ReceiptForm, SignUpForm, AddMemberForm, CustomExpenseForm
 from .utils import get_exchange_rates
+
+def calculate_amount(entity):
+    return (functools.reduce(lambda a, b: a + b.amount, entity, 0) or 0)
+
+def calculate_available_amount(expenses, receipts):
+    return calculate_amount(receipts) - calculate_amount(expenses)
+
+def calculate_average(entity, members):
+    return (functools.reduce(lambda a, b: a + b.amount, entity, 0) / len(members)) or 0
 
 def home(request):
     if request.user.is_authenticated:
         groups = request.user.membership_groups.all()
+        groups = map(lambda x: {"id": x.id, "name": x.name, "amount": calculate_available_amount(x.expenses.all(), x.receipts.all())}, groups)
         return render(request, 'tricount/home.html', {'groups': groups})
     else:
         return redirect('login')
@@ -30,19 +41,34 @@ def create_group(request):
 def group_detail(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     expenses = group.expenses.all()
-    participant_payments = ParticipantPayment.objects.filter(group=group)
-    total_paid_by_each_member = {}
-    for payment in participant_payments:
-        if payment.member in total_paid_by_each_member:
-            total_paid_by_each_member[payment.member] += payment.amount_paid
-        else:
-            total_paid_by_each_member[payment.member] = payment.amount_paid
-    total_amount = functools.reduce(lambda a, b: a + b.amount, expenses, 0)
+    total_expenses_amount = functools.reduce(lambda a, b: a + b.amount, expenses, 0)
+    receipts = group.receipts.all()
+    total_receipts_amount = functools.reduce(lambda a, b: a + b.amount, receipts, 0)
+
+    members = group.members.all()
+    average_expenses = calculate_average(expenses, members)
+    average_receipts = calculate_average(receipts, members)
+    solde = calculate_available_amount(group.expenses.all(), group.receipts.all())
+    max_receipt = 0
+
+    for member in members:
+        member.group_receipts_amount = calculate_amount(member.receipts_payer.filter(group=group))
+        if member.group_receipts_amount > max_receipt:
+            max_receipt = member.group_receipts_amount
+    
+    for member in members:
+        member.group_balance = round(max_receipt - member.group_receipts_amount)
+
     return render(request, 'tricount/group_detail.html', {
         'group': group,
+        'members': members,
+        "solde": solde,
         'expenses': expenses,
-        'total_paid_by_each_member': total_paid_by_each_member,
-        'total_amount': total_amount
+        'total_expenses_amount': total_expenses_amount,
+        'receipts': receipts,
+        'total_receipts_amount': total_receipts_amount,
+        "average_expenses": round(average_expenses),
+        "average_receipts": round(average_receipts)
     })
 
 @login_required
@@ -52,9 +78,12 @@ def add_member(request, group_id):
         form = AddMemberForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
-            user = get_object_or_404(User, username=username)
-            group.members.add(user)
-            return redirect('group_detail', group_id=group.id)
+            user = User.objects.filter(username=username).first()
+            if user:
+                group.members.add(user)
+                return redirect('group_detail', group_id=group.id)
+            else:
+                return render(request, 'tricount/add_member.html', {'form': form, 'group': group, 'error': f"""L'utilisateur {username} n'existe pas !"""})
     else:
         form = AddMemberForm()
     return render(request, 'tricount/add_member.html', {'form': form, 'group': group})
@@ -89,7 +118,6 @@ def add_expense(request, group_id):
             expense.group = group
             expense.save()
             form.save_m2m()
-            group.total_amount += expense.amount
             group.save()
             return redirect('group_detail', group_id=group.id)
     else:
@@ -99,18 +127,33 @@ def add_expense(request, group_id):
     return render(request, 'tricount/add_expense.html', {'form': form, 'group': group})
 
 @login_required
+def add_receipt(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    if request.method == 'POST':
+        form = ReceiptForm(request.POST)
+        if form.is_valid():
+            receipt = form.save(commit=False)
+            receipt.group = group
+            receipt.save()
+            form.save_m2m()
+            group.save()
+            return redirect('group_detail', group_id=group.id)
+    else:
+        form = ReceiptForm()
+        form.fields["payer"].queryset = group.members.all()
+    return render(request, 'tricount/add_receipt.html', {'form': form, 'group': group})
+
+@login_required
 def add_custom_expense(request, group_id):
     group = get_object_or_404(Group, id=group_id)
     if request.method == 'POST':
         form = CustomExpenseForm(request.POST)
         if form.is_valid():
             description = form.cleaned_data['description']
-            total_amount = form.cleaned_data['total_amount']
             payments = form.cleaned_data['payments']
             expense = Expense.objects.create(
                 group=group,
                 description=description,
-                amount=total_amount,
                 payer=request.user
             )
             for payment_data in payments:
@@ -122,7 +165,6 @@ def add_custom_expense(request, group_id):
                     member=member,
                     amount_paid=amount_paid
                 )
-            group.total_amount += total_amount
             group.save()
             return redirect('group_detail', group_id=group.id)
     else:

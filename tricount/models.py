@@ -10,7 +10,6 @@ class Group(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     members = models.ManyToManyField(User, related_name='membership_groups')
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return self.name
@@ -25,6 +24,15 @@ class Expense(models.Model):
 
     def __str__(self):
         return self.description
+    
+class Receipt(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='receipts')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField(default=datetime.datetime.now)
+    payer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receipts_payer')
+
+    def __str__(self):
+        return f"""{self.amount}"""
 
 class MemberBalance(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)

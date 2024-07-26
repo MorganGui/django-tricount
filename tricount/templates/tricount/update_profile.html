@@ -2,10 +2,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Update Profile</h2>
+    <h2>Mettre à jour le profile</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save changes</button>
+        {{ form.as_div }}
+        <button class="glow" type="submit">Enregistrer</button>
     </form>
 {% endblock %}

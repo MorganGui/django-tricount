@@ -4,6 +4,11 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_div }}
+        {% if error %}
+            <ul class="errorlist">
+                <li>{{ error }}</li>
+            </ul>
+        {% endif %}
         <button class="glow" type="submit">Ajouter le membre</button>
     </form>
 {% endblock %}

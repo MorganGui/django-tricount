@@ -4,6 +4,7 @@
 {% block content %}
     <h1>{{ group.name }}</h1>
     <p>{{ group.description }}</p>
+    <p>Solde restant : <b>{{ solde }}</b> €<br>Moyenne des dépenses : <b>{{ average_expenses }}</b> €<br>Moyenne des recettes : <b>{{ average_receipts }}</b> €</p>
 
     <h2>Membres</h2>
     <ul>
@@ -12,24 +13,20 @@
         {% endfor %}
     </ul>
 
-    <h2>Soldes</h2>
-    <ul>
-        {% for balance in balances %}
-        <li>{{ balance.member.username }}:
-            {% if balance.balance > 0 %}
-            <span style="color: green;">doit {{ balance.balance }} au groupe</span>
-            {% elif balance.balance < 0 %}
-            <span style="color: red;">est dû {{ balance.balance|custom_abs }} par le groupe</span>
-            {% else %}
-            est à jour
-            {% endif %}
-        </li>
+    <div class="groups">
+        <h2>Sommes dues</h2>
+        {% for member in members %}
+            <div class="group">
+                <p>{{ member.username }} <span style="font-size: 0.8rem;">({{ member.group_balance }} €)</span></p>
+                <div>{{ member.group_balance }} €</div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 
     <h2>Actions</h2>
     
     <div style="margin-bottom: 1rem;">
+        <div style="margin-bottom: 1rem;"><a class="button glow" href="{% url 'add_receipt' group.id %}">Ajouter de la MOULA</a></div>
         <div style="margin-bottom: 1rem;"><a class="button secondary" href="{% url 'add_expense' group.id %}">Ajouter une dépense</a></div>
         <div style="margin-bottom: 1rem;"><a class="button secondary" href="{% url 'add_member' group.id %}">Ajouter un membre</a></div>
         <div style="margin-bottom: 1rem;"><a class="button secondary" href="{% url 'edit_group' group.id %}">Modifier le groupe</a></div>
@@ -37,11 +34,22 @@
 
     <div class="groups">
         <h2>Dépenses</h2>
-        <p>Total des dépenses: {{ total_amount }} €</p>
+        <p>Total des dépenses: {{ total_expenses_amount }} €</p>
         {% for expense in expenses %}
             <div class="group">
-                <p>{{ expense.description }} <span style="font-size: 0.8rem;">({{ expense.payer.username }})</span></p>
+                <p>{{ expense.description }} <span style="font-size: 0.8rem;">({{ expense.payer.username }} - {{ expense.date }})</span></p>
                 <div>{{ expense.amount }} €</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="groups">
+        <h2>Recettes</h2>
+        <p>Total des recettes: {{ total_receipts_amount }} €</p>
+        {% for receipt in receipts %}
+            <div class="group">
+                <p>{{ receipt.payer.username }} <span style="font-size: 0.8rem;">({{ receipt.date }})</span></p>
+                <div>{{ receipt.amount }} €</div>
             </div>
         {% endfor %}
     </div>
