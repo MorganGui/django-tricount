@@ -23,7 +23,7 @@ def home(request):
         groups = map(lambda x: {"id": x.id, "name": x.name, "amount": calculate_available_amount(x.expenses.all(), x.receipts.all())}, groups)
         return render(request, 'tricount/home.html', {'groups': groups})
     else:
-        return redirect('login')
+        return render(request, 'tricount/home.html')
 
 @login_required
 def create_group(request):
