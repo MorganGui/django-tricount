@@ -1,3 +1,4 @@
+import functools
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
@@ -6,9 +7,6 @@ from .models import Group, Expense, Profile, ParticipantPayment
 from .forms import GroupForm, ExpenseForm, SignUpForm, AddMemberForm, CustomExpenseForm
 from .utils import get_exchange_rates
 
-# def home(request):
-#     groups = Group.objects.all()
-#     return render(request, 'tricount/home.html', {'groups': groups})
 def home(request):
     if request.user.is_authenticated:
         groups = request.user.membership_groups.all()
@@ -31,7 +29,7 @@ def create_group(request):
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(Group, id=group_id)
-    expenses = Expense.objects.filter(group=group)
+    expenses = group.expenses.all()
     participant_payments = ParticipantPayment.objects.filter(group=group)
     total_paid_by_each_member = {}
     for payment in participant_payments:
@@ -39,7 +37,7 @@ def group_detail(request, group_id):
             total_paid_by_each_member[payment.member] += payment.amount_paid
         else:
             total_paid_by_each_member[payment.member] = payment.amount_paid
-    total_amount = group.total_amount
+    total_amount = functools.reduce(lambda a, b: a + b.amount, expenses, 0)
     return render(request, 'tricount/group_detail.html', {
         'group': group,
         'expenses': expenses,
@@ -96,6 +94,8 @@ def add_expense(request, group_id):
             return redirect('group_detail', group_id=group.id)
     else:
         form = ExpenseForm()
+        form.fields["payer"].queryset = group.members.all()
+        form.fields["participants"].queryset = group.members.all()
     return render(request, 'tricount/add_expense.html', {'form': form, 'group': group})
 
 @login_required

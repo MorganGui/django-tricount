@@ -28,24 +28,26 @@
     </ul>
 
     <h2>Actions</h2>
-    <ul>
-        <li><a href="{% url 'add_expense' group.id %}">Ajouter une dépense</a></li>
-        <li><a href="{% url 'add_custom_expense' group.id %}">Ajouter une dépense personnalisée</a></li>
-        <li><a href="{% url 'add_member' group.id %}">Ajouter un membre</a></li>
-        <li><a href="{% url 'edit_group' group.id %}">Modifier le groupe</a></li>
-        <li>
-            <form method="post" action="{% url 'delete_group' group.id %}">
-                {% csrf_token %}
-                <button type="submit">Supprimer le groupe</button>
-            </form>
-        </li>
-    </ul>
+    
+    <div style="margin-bottom: 1rem;">
+        <div style="margin-bottom: 1rem;"><a class="button secondary" href="{% url 'add_expense' group.id %}">Ajouter une dépense</a></div>
+        <div style="margin-bottom: 1rem;"><a class="button secondary" href="{% url 'add_member' group.id %}">Ajouter un membre</a></div>
+        <div style="margin-bottom: 1rem;"><a class="button secondary" href="{% url 'edit_group' group.id %}">Modifier le groupe</a></div>
+    </div>
 
-    <h2>Dépenses</h2>
-    <p>Total des dépenses: {{ total_expenses }}</p>
-    <ul>
-        {% for payment in payments %}
-        <li>{{ payment.member.username }} a payé {{ payment.amount_paid }} pour {{ payment.expense.description }}</li>
+    <div class="groups">
+        <h2>Dépenses</h2>
+        <p>Total des dépenses: {{ total_amount }} €</p>
+        {% for expense in expenses %}
+            <div class="group">
+                <p>{{ expense.description }} <span style="font-size: 0.8rem;">({{ expense.payer.username }})</span></p>
+                <div>{{ expense.amount }} €</div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
+
+    <form method="post" action="{% url 'delete_group' group.id %}">
+        {% csrf_token %}
+        <button class="glow" type="submit">Supprimer le groupe</button>
+    </form>
 {% endblock %}
